@@ -1,0 +1,9 @@
+# toml formatted, Tom's Obvious, Minimal Language
+
+LogFile = "gollector.log"
+
+[MQTT]
+Broker = "tcp://localhost:1883"
+Name = "Gollector"
+Path = "/mqtt/subscribe/path/#"
+QOS = 2
