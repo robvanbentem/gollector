@@ -1,6 +1,7 @@
 # toml formatted, Tom's Obvious, Minimal Language
 
 LogFile = "gollector.log"
+Database = "<user>:<pass>@tcp(<host>:<port>)/<dbname>"
 
 [MQTT]
 Broker = "tcp://localhost:1883"

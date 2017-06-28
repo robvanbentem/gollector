@@ -7,6 +7,7 @@ import (
 	"gollector/collector"
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"encoding/json"
+	"gollector/db"
 )
 
 type Payload struct {
@@ -19,6 +20,8 @@ var collectors map[string]collector.CollectorCreator
 func main() {
 	common.LoadConfig()
 	common.InitLogger()
+	db.InitDB(common.ConfigRoot.Database)
+	defer db.CloseDB()
 
 	if err := net.Connect(); err != nil {
 		common.Log.Fatal("Could not connect to MQTT broker")
@@ -37,12 +40,12 @@ func main() {
 	for {
 		select {
 		case m := <-comms:
-			handleMessage(m)
+			handle(m)
 		}
 	}
 }
 
-func handleMessage(m MQTT.Message) {
+func handle(m MQTT.Message) {
 	i := new(Payload)
 	err := json.Unmarshal(m.Payload(), i)
 	if err != nil {
@@ -50,8 +53,10 @@ func handleMessage(m MQTT.Message) {
 		return
 	}
 
+	common.Log.Infof("Handling type %s\n", i.Type)
+
 	if val, ok := collectors[i.Type]; ok {
-		common.Log.Info(val().Handle(m.Payload()))
+		val().Handle(m.Payload())
 	} else {
 		common.Log.Error("Unknown Message type")
 	}

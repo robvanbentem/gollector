@@ -9,9 +9,8 @@ import (
 type config struct {
 	MQTT configMQTT
 
-	DevicePath      string
-	MonitorInterval duration
-	LogFile         string
+	LogFile  string
+	Database string
 }
 
 type configMQTT struct {
