@@ -8,6 +8,7 @@ import (
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"encoding/json"
 	"github.com/robvanbentem/gocmn"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type Payload struct {

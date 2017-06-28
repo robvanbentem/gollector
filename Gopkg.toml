@@ -3,4 +3,5 @@ required = [
     "github.com/BurntSushi/toml",
     "github.com/robvanbentem/gogarden",
     "github.com/robvanbentem/gocmn",
+    "github.com/go-sql-driver/mysql",
 ]
