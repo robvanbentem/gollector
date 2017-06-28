@@ -1,7 +1,6 @@
 package net
 
 import (
-	"fmt"
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"gollector/common"
 )

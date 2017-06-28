@@ -1,8 +1,6 @@
 required = [
     "github.com/eclipse/paho.mqtt.golang",
     "github.com/BurntSushi/toml",
-    "github.com/op/go-logging",
-    "github.com/jmoiron/sqlx",
-    "github.com/go-sql-driver/mysql",
     "github.com/robvanbentem/gogarden",
+    "github.com/robvanbentem/gocmn",
 ]

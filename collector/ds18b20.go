@@ -3,9 +3,8 @@ package collector
 import (
 	"gogarden/sensor"
 	"encoding/json"
-	"gollector/db"
-	"gollector/common"
 	"time"
+	"github.com/robvanbentem/gocmn"
 )
 
 type DS18B20 struct{}
@@ -20,12 +19,12 @@ func (ds *DS18B20) Handle(b []byte) error {
 
 	dt, _ := time.Parse(time.RFC3339, jk.Date)
 
-	tx := db.Get().MustBegin()
+	tx := gocmn.GetDB().MustBegin()
 	tx.MustExec("INSERT INTO `data` (type, device, value, date) VALUES(?, ?, ?, ?)", jk.Type, jk.DeviceID, jk.Temperature, dt)
 	err := tx.Commit()
 
 	if err != nil {
-		common.Log.Error("Error inserting DS18B20 data: " + err.Error())
+		gocmn.Log.Error("Error inserting DS18B20 data: " + err.Error())
 	}
 
 	return err
