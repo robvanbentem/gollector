@@ -3,6 +3,8 @@ package net
 import (
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"gollector/common"
+	"time"
+	"gocmn"
 )
 
 type Message struct {
@@ -32,6 +34,8 @@ func Connect() error {
 
 	path = cfg.Path
 
+	go checkConnection()
+
 	return nil
 }
 
@@ -52,5 +56,19 @@ func Disconnect() {
 }
 
 func handleMessage(c MQTT.Client, m MQTT.Message) {
+	gocmn.Log.Debug("Got new message")
 	*comms <- m
+}
+
+func checkConnection() {
+	ticker := time.NewTicker(time.Second * 5).C
+	for {
+		select {
+		case <-ticker:
+			if !client.IsConnected() {
+				gocmn.Log.Info("MQTT disconnected, reconnecting..")
+				Connect()
+			}
+		}
+	}
 }
