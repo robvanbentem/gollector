@@ -5,6 +5,7 @@ import (
 	"gollector/common"
 	"time"
 	"gocmn"
+	"go/token"
 )
 
 type Message struct {
@@ -22,7 +23,7 @@ func Connect() error {
 
 	opts := MQTT.NewClientOptions().AddBroker(cfg.Broker)
 	opts.SetClientID(cfg.Name)
-	opts.SetDefaultPublishHandler(handleMessage)
+	opts.SetDefaultPublishHandler(defaultMessageHandler)
 
 	client = MQTT.NewClient(opts)
 	token := client.Connect()
@@ -40,12 +41,11 @@ func Connect() error {
 }
 
 func Subscribe(c *chan MQTT.Message) error {
-	if token := client.Subscribe(path, 2, handleMessage); token.Wait() && token.Error() != nil {
-		return token.Error()
+	if tkn := client.Subscribe(path, 2, func(c MQTT.Client, m MQTT.Message) { *comms <- m }); tkn.Wait() && tkn.Error() != nil {
+		return tkn.Error()
 	}
 
 	comms = c
-
 	return nil
 }
 
@@ -55,20 +55,23 @@ func Disconnect() {
 	}
 }
 
-func handleMessage(c MQTT.Client, m MQTT.Message) {
-	gocmn.Log.Debug("Got new message")
-	*comms <- m
+func defaultMessageHandler(c MQTT.Client, m MQTT.Message) {
+	gocmn.Log.Warning("Got message on default message handler")
 }
 
 func checkConnection() {
-	ticker := time.NewTicker(time.Second * 5).C
+	ticker := time.NewTicker(time.Second * 60).C
 	for {
 		select {
 		case <-ticker:
 			if !client.IsConnected() {
 				gocmn.Log.Info("MQTT disconnected, reconnecting..")
 				Connect()
+			} else {
+				gocmn.Log.Debug("MQTT connection OK")
 			}
+
+			Subscribe(comms)
 		}
 	}
 }
