@@ -1,11 +1,11 @@
 package net
 
 import (
-	MQTT "github.com/eclipse/paho.mqtt.golang"
+	"gocmn"
 	"gollector/common"
 	"time"
-	"gocmn"
-	"go/token"
+
+	MQTT "github.com/eclipse/paho.mqtt.golang"
 )
 
 type Message struct {
